@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Web app</title>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+</head>
+<body data-ng-app="onepush" data-ng-controller="pushcheck">
+    <header style="font-family: 'Open Sans',sans-serif">
+        <div class="container">
+            <div class="col-sm-7">
+                <h1>OnePush <small>- Finding the best online website</small></h1>
+            </div>
+            <div class="col-sm-5" style="margin-top: 20px;">
+                <div class="alert alert-success text-center">
+                    We have recorded <b>{{total_input}}</b> pushes till now. And Counting.....
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="container">
+        <div class="col-sm-7" style="font-family: 'Open Sans',sans-serif">
+            <div>
+                <h3 class="text-center">Available Records</h3>
+                <div class="col-sm-12">
+                    <div class="pull-right"><input name="search" data-ng-model="test" style="border:1px solid white; height:40px; border-bottom-color: gray; outline: none" placeholder="Search"><span class="glyphicon glyphicon-search"></span></div>
+                </div>
+                <br><br><br>
+                <div class="jumbotron" style="overflow-y: scroll; height:500px;">
+                    <div class="well" style="background-color: white" data-ng-repeat="x in website | filter: test">
+                        <div class="container-fluid">
+                            <div class="col-sm-2">
+                                <img src="{{x.favicon_image}}" class="img-circle" alt="NA" height="40" width="40">
+                            </div>
+                            <div class="col-sm-9">
+                                <h4>{{x.title}}</h4>
+                                <br>
+                                <a href="{{x.url_address}}" style="text-decoration: none; overflow-x: scroll" target="_blank"><span class="glyphicon glyphicon-link"></span> {{x.url_address}}</a>
+                                <br>
+                                <strong><span class="glyphicon glyphicon-tag"></span> {{x.tag}}</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-5">
+            <!---->
+            <div class="well" style="font-family: 'Open Sans',sans-serif">
+                <div class="text-center"><h1>Create New</h1></div>
+                <br>
+                <form name="newForm">
+                    <div class="form-group">
+                        <label for="title"><span class="glyphicon glyphicon-file"></span> Title</label>
+                        <input class="form-control" type="text" id="title" name="title" placeholder="Title of the Website" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="url" class=""><span class="glyphicon glyphicon-globe"></span> Website URL</label>
+                        <input class="form-control" type="url" id="url" name="url" placeholder="Domain URL" data-ng-model="linkup" required>
+                        {{linkup}}
+                    </div>
+                    <div class="form-group">
+                        <label for="tag"><span class="glyphicon glyphicon-tag"></span> Tag</label>
+                        <input class="form-control" type="text" id="tag" name="tag" placeholder="Mention a tag" required>
+                    </div>
+                    <div data-ng-show="newForm.url.$error.url">
+                        <hr>
+                        <h1 class="text-center">
+                            Preview
+                        </h1>
+                        <div class="col-sm-2">
+                            <img class="img-thumbnail" height="50" width="50" alt="NA" id="demo_img">
+                        </div>
+                        <div class="col-sm-7">
+                            <b id="title_input"></b>
+                            <div class="alert alert-info"><span class="glyphicon glyphicon-link"></span><strong id="website_url"></strong></div>
+                        </div>
+                    </div>
+                    <br>
+                    <button  class="btn btn-success btn-lg btn-block text-center" style="font-family: 'Open Sans',sans-serif" data-ng-click="submition()" id="submit_btn"> Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        var onepush = angular.module("onepush",[]);
+        onepush.controller("pushcheck", function($scope,$http){
+            $http({
+                method:"GET",
+                url:"https://hackerearth.0x10.info/api/one-push?type=json&query=list_websites"
+            }).then(function mySuccess(response){
+                $scope.total_input=response.data.websites.length;
+                var i=0;
+                for(i=0; i<response.data.websites.length; i++){
+                    console.log(response.data.websites[i].title);
+                }
+                $scope.website=response.data.websites;
+            })
+        });
+    </script>
+    <script   src="https://code.jquery.com/jquery-3.1.0.min.js"   integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s="   crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <script>
+        $(document).ready(function(){
+            $("#url").keyup(function(){
+                var url=$(this).val();
+                var final_url="http://www.google.com/s2/favicons?domain="+url;
+                $("#demo_img").attr('src',final_url);
+                $("#website_url").text(url);
+            });
+        });
+    </script>
+</body>
+</html>
